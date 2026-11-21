@@ -1,0 +1,185 @@
+{
+  "dataset_version": 1,
+  "samples": [
+    {
+      "id": "text-scam-01",
+      "type": "text",
+      "label": "scam",
+      "content": "Your account has been suspended. Verify your password immediately using this message or access will be lost."
+    },
+    {
+      "id": "text-scam-02",
+      "type": "text",
+      "label": "scam",
+      "content": "Urgent: pay the processing fee today by gift card to release your prize."
+    },
+    {
+      "id": "text-scam-03",
+      "type": "text",
+      "label": "scam",
+      "content": "We detected unauthorized activity. Click here to reset your password and confirm your account now."
+    },
+    {
+      "id": "text-legit-01",
+      "type": "text",
+      "label": "legitimate",
+      "content": "The project review has moved to Thursday at 2 PM. Please bring the latest draft."
+    },
+    {
+      "id": "text-legit-02",
+      "type": "text",
+      "label": "legitimate",
+      "content": "Thanks for helping at the community garden. We will meet at the library entrance on Saturday."
+    },
+    {
+      "id": "sms-scam-01",
+      "type": "sms",
+      "label": "scam",
+      "content": "Final notice: your toll payment is overdue. Pay now at http://toll-payments-confirm.xyz or a penalty will apply."
+    },
+    {
+      "id": "sms-scam-02",
+      "type": "sms",
+      "label": "scam",
+      "content": "A delivery fee is required today. Send the money with a gift card to reschedule your parcel."
+    },
+    {
+      "id": "sms-scam-03",
+      "type": "sms",
+      "label": "scam",
+      "content": "Bank security: share the one-time code we just sent to stop your account from being suspended."
+    },
+    {
+      "id": "sms-legit-01",
+      "type": "sms",
+      "label": "legitimate",
+      "content": "Your verification code is 482913. It expires in 10 minutes. Do not share this code with anyone."
+    },
+    {
+      "id": "sms-legit-02",
+      "type": "sms",
+      "label": "legitimate",
+      "content": "Reminder: your dentist appointment is tomorrow at 9:30 AM. Reply C to confirm."
+    },
+    {
+      "id": "email-scam-01",
+      "type": "email",
+      "label": "scam",
+      "content": "Subject: Payroll access suspended. Dear employee, urgently verify your credentials at the attached sign-in page or your salary will be delayed."
+    },
+    {
+      "id": "email-scam-02",
+      "type": "email",
+      "label": "scam",
+      "content": "Subject: Overdue invoice. Transfer the outstanding balance to this new bank account within 24 hours to avoid legal action."
+    },
+    {
+      "id": "email-scam-03",
+      "type": "email",
+      "label": "scam",
+      "content": "Subject: Final account notice. Your mailbox will be suspended today. Click here to confirm your password immediately."
+    },
+    {
+      "id": "email-legit-01",
+      "type": "email",
+      "label": "legitimate",
+      "content": "Subject: Notes from today's planning meeting. The agenda and action items are attached for everyone who attended."
+    },
+    {
+      "id": "email-legit-02",
+      "type": "email",
+      "label": "legitimate",
+      "content": "Subject: Order confirmation. Your order has shipped, and the carrier's estimated delivery date is next Tuesday."
+    },
+    {
+      "id": "url-scam-01",
+      "type": "url",
+      "label": "scam",
+      "content": "https://secure-paypal-account.verify-login.xyz/session"
+    },
+    {
+      "id": "url-scam-02",
+      "type": "url",
+      "label": "scam",
+      "content": "http://192.0.2.45/bank/verify"
+    },
+    {
+      "id": "url-legit-01",
+      "type": "url",
+      "label": "legitimate",
+      "content": "https://www.gov.uk/government/organisations"
+    },
+    {
+      "id": "url-legit-02",
+      "type": "url",
+      "label": "legitimate",
+      "content": "https://www.nhs.uk/nhs-services/gps/"
+    },
+    {
+      "id": "url-legit-03",
+      "type": "url",
+      "label": "legitimate",
+      "content": "https://www.wikipedia.org/"
+    },
+    {
+      "id": "script-scam-01",
+      "type": "script",
+      "label": "scam",
+      "content": "JavaScript snippet reads document.cookie and sends the collected values to an unfamiliar external server."
+    },
+    {
+      "id": "script-scam-02",
+      "type": "script",
+      "label": "scam",
+      "content": "A script decodes a hidden command, runs it without user confirmation, and retrieves the next stage from a remote host."
+    },
+    {
+      "id": "script-legit-01",
+      "type": "script",
+      "label": "legitimate",
+      "content": "This JavaScript function updates the page heading when the user selects a different theme."
+    },
+    {
+      "id": "script-legit-02",
+      "type": "script",
+      "label": "legitimate",
+      "content": "The Python utility reads a local CSV file, counts its rows, and prints the total."
+    },
+    {
+      "id": "script-legit-03",
+      "type": "script",
+      "label": "legitimate",
+      "content": "A scheduled script backs up the application's configuration to the approved internal storage folder."
+    },
+    {
+      "id": "chat-scam-01",
+      "type": "chat",
+      "label": "scam",
+      "content": "Hello, I am from your bank's security team. Your account is at risk; send me the one-time password so I can protect it."
+    },
+    {
+      "id": "chat-scam-02",
+      "type": "chat",
+      "label": "scam",
+      "content": "I am your manager and need an urgent favor. Buy gift cards now and send me the redemption codes."
+    },
+    {
+      "id": "chat-legit-01",
+      "type": "chat",
+      "label": "legitimate",
+      "content": "Would you like to meet for lunch after the workshop? I can reserve a table near the office."
+    },
+    {
+      "id": "chat-legit-02",
+      "type": "chat",
+      "label": "legitimate",
+      "content": "I shared the meeting notes in our team folder. Let me know if you cannot open the document."
+    },
+    {
+      "id": "chat-legit-03",
+      "type": "chat",
+      "label": "legitimate",
+      "content": "Thanks for the update. I will review the schedule this afternoon and reply with my availability."
+    }
+  ]
+}

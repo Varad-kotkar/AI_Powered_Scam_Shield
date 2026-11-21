@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
-import AnnouncementBanner from "./components/AnnouncementBanner";
 import PremiumHero from "./components/PremiumHero";
 import PremiumSearchBar from "./components/PremiumSearchBar";
 import InferencePanel from "./components/InferencePanel";
 import FaqSection from "./components/FaqSection";
 import SiteFooter from "./components/SiteFooter";
 import { textCheck, urlCheck, imageCheckFile, chatMultipart } from "./api";
-import PlaygroundPage from "./pages/PlaygroundPage";
+import BatchScanPage from "./pages/BatchScanPage";
 import DocsPage from "./pages/DocsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -67,7 +66,6 @@ function HomePage() {
 
         <main className="flex-1">
           <div className="mx-auto flex w-full max-w-3xl flex-col px-4 pb-16 pt-8 md:pb-20">
-            <AnnouncementBanner />
             <PremiumHero />
 
             <section id="modes" className="mt-6">
@@ -102,7 +100,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/playground" element={<PlaygroundPage />} />
+      <Route path="/batch-scan" element={<BatchScanPage />} />
       <Route path="/docs" element={<DocsPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

@@ -18,8 +18,8 @@ export default function NavBar() {
         </div>
 
         <nav className="flex items-center gap-4 text-xs text-slate-500 md:text-sm">
-          <Link to="/playground" className="hidden rounded-full px-3 py-1 hover:bg-slate-100 md:inline-block">
-            Playground
+          <Link to="/batch-scan" className="rounded-full px-3 py-1 hover:bg-slate-100">
+            Batch Scan
           </Link>
           <Link to="/docs" className="hidden rounded-full px-3 py-1 hover:bg-slate-100 md:inline-block">
             Docs

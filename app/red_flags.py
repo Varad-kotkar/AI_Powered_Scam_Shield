@@ -172,6 +172,10 @@ def _urls_in(text: str) -> List[str]:
     ]
 
 
+def extract_urls(text: str) -> List[str]:
+    return _urls_in(text)
+
+
 def detect_red_flags(content: str = "", target_url: Optional[str] = None) -> List[RedFlag]:
     flags: List[RedFlag] = []
     seen: Set[Tuple[str, str]] = set()

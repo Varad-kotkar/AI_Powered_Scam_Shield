@@ -207,7 +207,7 @@ export default function PremiumSearchBar({
                 <textarea
                   rows={4}
                   placeholder={placeholder}
-                  className="flex-1 resize-none bg-transparent text-base text-black placeholder:text-gray-500 border-0 outline-none focus:outline-none focus:ring-0 focus:border-0 shadow-none font-normal leading-relaxed max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent mt-0.5"
+                  className="min-w-0 flex-1 resize-none bg-transparent text-base text-black placeholder:text-gray-500 border-0 outline-none focus:outline-none focus:ring-0 focus:border-0 shadow-none font-normal leading-relaxed max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent mt-0.5"
                   style={{
                     scrollbarWidth: "thin",
                     scrollbarColor: "#CBD5E0 transparent"
@@ -219,7 +219,7 @@ export default function PremiumSearchBar({
                 <input
                   type="text"
                   placeholder={placeholder}
-                  className="flex-1 bg-transparent text-base text-black placeholder:text-gray-500 border-0 outline-none focus:outline-none focus:ring-0 focus:border-0 shadow-none font-normal h-8"
+                  className="min-w-0 flex-1 bg-transparent text-base text-black placeholder:text-gray-500 border-0 outline-none focus:outline-none focus:ring-0 focus:border-0 shadow-none font-normal h-8"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
@@ -243,7 +243,7 @@ export default function PremiumSearchBar({
                 {/* Send Button */}
                 <Button
                   size="icon"
-                  className={`inline-flex items-center justify-center rounded-lg bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950 transition-colors flex-shrink-0 ${isChatMode ? "h-9 w-9" : "h-8 w-8"}`}
+                  className={`inline-flex items-center justify-center rounded-lg bg-slate-900 px-0 text-white hover:bg-slate-800 active:bg-slate-950 transition-colors flex-shrink-0 ${isChatMode ? "h-9 w-9" : "h-8 w-8"}`}
                   onClick={run}
                   disabled={loading}
                   aria-label="Send"
@@ -339,22 +339,6 @@ export default function PremiumSearchBar({
         )}
       </div>
 
-      {/* Custom scrollbar styles */}
-      <style jsx>{`
-        textarea::-webkit-scrollbar {
-          width: 6px;
-        }
-        textarea::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        textarea::-webkit-scrollbar-thumb {
-          background: #CBD5E0;
-          border-radius: 3px;
-        }
-        textarea::-webkit-scrollbar-thumb:hover {
-          background: #A0AEC0;
-        }
-      `}</style>
     </motion.div>
   );
 }
@@ -384,6 +368,9 @@ function TabButton({ label, active, onClick }) {
 
   return (
     <button
+      type="button"
+      aria-label={label}
+      title={label}
       onClick={onClick}
       className={`px-2 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex items-center gap-1.5 flex-shrink-0 ${
         active

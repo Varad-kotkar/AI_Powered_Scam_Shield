@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "./ui/button"
 import { cn } from "../lib/utils"
+import { formatShareWarning } from "../utils/shareWarning"
 import {
   ShieldCheck,
   AlertTriangle,
@@ -95,7 +96,7 @@ const getLoadingText = (mode, data) => {
 // Get classes based on mode or intent
 const getClassesForData = (mode, data) => {
   // Check if it's URL mode (either from mode prop or from intent/data)
-  if (mode === "url" || data?.mode === "url" || data?.intent === "url_check") {
+  if (mode === "url" || mode === "urls" || data?.mode === "url" || data?.intent === "url_check") {
     return ["benign", "phishing", "malware"]
   }
   return ["benign", "phishing"]
@@ -178,6 +179,7 @@ function TimeElapsed({ startTime }) {
 
 export default function InferencePanel({ data, loading, mode, onClear }) {
   const [copied, setCopied] = useState(false)
+  const [warningCopied, setWarningCopied] = useState(false)
   const [isJsonOpen, setIsJsonOpen] = useState(false)
   const [processingTime, setProcessingTime] = useState(null)
   const loadingStartRef = useRef(null)
@@ -198,6 +200,16 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       showToast("Failed to copy", 'error')
+    }
+  }
+
+  const handleCopyWarning = async () => {
+    try {
+      await navigator.clipboard.writeText(formatShareWarning(data))
+      setWarningCopied(true)
+      setTimeout(() => setWarningCopied(false), 2000)
+    } catch (err) {
+      showToast("Failed to copy warning alert", "error")
     }
   }
 
@@ -669,11 +681,11 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
             )}
 
             {/* Raw JSON Collapsible */}
-            <div>
+            <div className="flex flex-col flex-wrap gap-2 sm:flex-row">
               <button
                 onClick={() => setIsJsonOpen(!isJsonOpen)}
                 className={cn(
-                  "w-full flex items-center justify-between py-3 px-4 rounded-xl border bg-muted/20",
+                  "min-w-0 flex-1 flex items-center justify-between py-3 px-4 rounded-xl border bg-muted/20",
                   "hover:bg-muted/40 transition-colors text-sm font-medium",
                 )}
               >
@@ -685,11 +697,32 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
                   <ChevronDown className="h-4 w-4" />
                 </motion.div>
               </button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCopyWarning}
+                className="shrink-0"
+              >
+                {warningCopied ? (
+                  <>
+                    <Check className="mr-2 h-4 w-4 text-emerald-600" />
+                    Copy Warning Alert
+                    <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+                      Copied!
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy Warning Alert
+                  </>
+                )}
+              </Button>
               {isJsonOpen && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-2 rounded-xl border bg-muted/10 p-4 relative"
+                  className="mt-2 basis-full rounded-xl border bg-muted/10 p-4 relative sm:order-2"
                 >
                   <Button variant="ghost" size="icon" className="absolute top-3 right-3 h-7 w-7" onClick={handleCopy}>
                     {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}

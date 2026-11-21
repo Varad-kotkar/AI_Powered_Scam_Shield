@@ -1,0 +1,149 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, sans-serif;
+  color: #172033;
+  background: #f8fafc;
+}
+
+body {
+  box-sizing: border-box;
+  width: 360px;
+  margin: 0;
+  padding: 16px;
+}
+
+* {
+  box-sizing: inherit;
+}
+
+h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+h3 {
+  margin: 12px 0 5px;
+  font-size: 12px;
+}
+
+header p,
+.hint,
+.source,
+.status {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.config {
+  display: grid;
+  gap: 7px;
+  margin: 16px 0 12px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.button {
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 7px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary {
+  color: #fff;
+  background: #b93818;
+}
+
+.secondary {
+  color: #172033;
+  background: #e2e8f0;
+}
+
+.button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.hint {
+  line-height: 1.45;
+}
+
+.status {
+  min-height: 16px;
+  margin: 8px 0;
+}
+
+.status.error {
+  color: #b91c1c;
+}
+
+.result {
+  display: grid;
+  gap: 5px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.result[hidden] {
+  display: none;
+}
+
+.verdict {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.verdict.scam {
+  color: #b91c1c;
+}
+
+.verdict.legitimate {
+  color: #047857;
+}
+
+.confidence,
+.explanation,
+.result li {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.confidence,
+.explanation {
+  margin: 0;
+}
+
+.result ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.result li + li {
+  margin-top: 4px;
+}

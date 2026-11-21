@@ -61,6 +61,14 @@ Scan responses preserve the existing `label`, `probs`, `explanation`, and modali
 
 Structured checks cover urgency, payment and credential requests, URL shorteners, Unicode/lookalike domains, visible-link versus `href` mismatches, and external HTML form `POST` targets. The full response, including these fields, is available in the UI's Raw Response panel.
 
+### Batch Scan and Local Review
+
+Open **Batch Scan** from the navigation and upload a UTF-8 `.txt` file (one message/URL per line) or `.csv` file (optionally with `message`, `text`, `content`, `email`, `sms`, or `body` and `url`, `link`, or `website` headers). Batch uploads are limited to 5 MB and 500 records; at most three jobs run at once. The API returns a job ID; the UI polls its progress and offers CSV/JSON downloads when complete. `MM_BATCH_CONCURRENCY` sets the server-side scan limit (default 4, maximum 16).
+
+The page also manages a local SQLite allowlist and false-positive review feedback. Allowlisted records are marked benign without calling the classifier. False-positive feedback is persisted locally and does not automatically alter model behavior. Set `MM_LOCAL_STORE_PATH` to choose a different database path; the default is `data/scam_shield_local.sqlite3`. Batch job progress/results are held in memory (up to 30 completed jobs), so a server restart clears active and recent batch jobs, but not allowlist or feedback records.
+
+The API uses `POST /api/batch_scan` and `GET /api/batch_scan/{job_id}` for scans, `POST /api/batch_scan/{job_id}/results/{item_id}/false_positive` for feedback, `GET/POST /api/allowlist` and `DELETE /api/allowlist/{entry_id}` for the allowlist, and `GET /api/feedback/false-positives` for review history.
+
 ---
 
 ## Model Performance

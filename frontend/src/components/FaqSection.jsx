@@ -1,139 +1,115 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, Shield, Zap, Globe, Brain, Lock, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronDown, ShieldCheck, Clock, Link2, Image, Lock, MessageCircle, ArrowRight } from "lucide-react";
 
 const faqs = [
   {
-    q: "What types of content can Scam Shield analyze?",
-    a: "AI Scam Shield can analyze text messages, emails, URLs, chat conversations, and screenshots of potential fraudulent content. Simply upload an image or paste raw text/URLs to get an instant verdict with confidence scores.",
+    q: "What can I scan?",
+    a: "Choose Text, SMS, Emails, URLs, Script, Images, or Chat. Each scan returns the fields supported by that input, including a verdict, confidence score, explanation, and structured red flags when present.",
   },
   {
-    q: "How accurate is Scam Shield's fraud detection?",
-    a: "AI Scam Shield uses advanced multimodal AI and transformer models trained on extensive cyber threat datasets. Our system achieves over 97-99% accuracy in detecting sophisticated phishing and fraud attempts with real-time confidence scoring.",
+    q: "What does the confidence score mean?",
+    a: "It is the model's estimate for the displayed verdict, not a guarantee of safety or fraud. Review the explanation and red flags, and verify unexpected requests through a known, official channel.",
   },
   {
-    q: "Does Scam Shield store my data or protect my privacy?",
-    a: "Your privacy is our priority. All content is processed in-memory for inference only and is never persisted to databases or shared with third parties. We don't store or analyze your personal data.",
+    q: "How is my submitted content handled?",
+    a: "Content is sent to the configured Scam Shield backend and may be processed by its configured model provider. Batch results are held in memory; allowlist entries and false-positive feedback are stored in the backend's local SQLite database. Do not submit sensitive content unless your deployment's data policy permits it.",
   },
   {
-    q: "Can I integrate Scam Shield into my own application?",
-    a: "Yes! Scam Shield provides a comprehensive REST API that you can integrate into your applications. The same backend endpoints powering this UI are available for developers to build custom solutions.",
+    q: "What should I do with a suspicious result?",
+    a: "Do not click links, send money, or share passwords or one-time codes. Contact the organization through a number or website you already trust. A benign verdict is not proof that a message is safe.",
   },
   {
-    q: "What makes Scam Shield different from other fraud detectors?",
-    a: "AI Scam Shield uses multimodal AI analysis, combining transformer-based text and URL analysis with computer vision in real-time. Unlike traditional tools that check single data types, Scam Shield provides unified detection across multiple communication channels.",
+    q: "Can I integrate the scanner with another application?",
+    a: "Yes. The backend exposes HTTP detection endpoints; see Docs for request and response shapes. The frontend and Batch Scan use those same detection services.",
   },
   {
-    q: "Is Scam Shield suitable for enterprise use?",
-    a: "Absolutely. AI Scam Shield is designed for both individual users and enterprise deployments, offering high-throughput API access, batch processing, and configurable threat sensitivity.",
+    q: "How does Batch Scan work?",
+    a: "Upload a CSV or TXT file to scan a bounded set of messages and URLs. Export results, manage the local allowlist, or record false-positive feedback for review.",
   },
 ];
 
 const features = [
   {
-    icon: <Brain className="h-6 w-6" />,
-    title: "AI-Powered Analysis",
-    description: "Advanced machine learning models for intelligent phishing detection"
+    icon: <MessageCircle className="h-5 w-5" />,
+    title: "Message cues",
+    description: "Review urgency, payment, credential, and impersonation cues in submitted text."
   },
   {
-    icon: <Zap className="h-6 w-6" />,
-    title: "Real-Time Results",
-    description: "Get instant analysis with sub-second response times"
+    icon: <Clock className="h-5 w-5" />,
+    title: "Link inspection",
+    description: "Lookalike domains, short links, and suspicious URL patterns are surfaced for review."
   },
   {
-    icon: <Shield className="h-6 w-6" />,
-    title: "Multimodal Detection",
-    description: "Analyze text, images, URLs, and chat simultaneously"
+    icon: <ShieldCheck className="h-5 w-5" />,
+    title: "Multiple formats",
+    description: "Inspect messages, email, scripts, images, URLs, and chat from one workbench."
   },
   {
-    icon: <Lock className="h-6 w-6" />,
-    title: "Privacy First",
-    description: "Your data is processed in-memory with zero storage"
+    icon: <Lock className="h-5 w-5" />,
+    title: "Local review tools",
+    description: "Maintain a local allowlist and submit false-positive feedback for later review."
   },
   {
-    icon: <Globe className="h-6 w-6" />,
-    title: "Global Coverage",
-    description: "Detect phishing attempts in multiple languages and formats"
+    icon: <Link2 className="h-5 w-5" />,
+    title: "Evidence details",
+    description: "Review confidence, red flags, explanations, and the raw response."
   },
   {
-    icon: <Sparkles className="h-6 w-6" />,
-    title: "Smart Scoring",
-    description: "Confidence scores and detailed threat analysis"
+    icon: <Image className="h-5 w-5" />,
+    title: "Image review",
+    description: "Extract readable image text and inspect the resulting scan verdict."
   }
 ];
 
 function FeaturesSection() {
   return (
-    <section className="relative mt-20 overflow-hidden">
-      {/* Geometric Background */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-0 w-64 h-64 bg-orange-500 rounded-full blur-3xl" />
-        <div className="absolute top-20 right-0 w-96 h-96 bg-orange-400 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 w-80 h-80 bg-purple-500 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-0 w-72 h-72 bg-orange-300 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-1/3 w-88 h-88 bg-red-500 rounded-full blur-3xl" />
-      </div>
-      
-      {/* Geometric Pattern */}
-      <div className="absolute inset-0">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-slate-200" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
-      <div className="relative max-w-3xl mx-auto px-4">
+    <section className="mt-16 border-t border-orange-100 pt-10">
+      <div className="mx-auto max-w-3xl px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.22 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="mb-8 text-center"
         >
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
-            Why Choose <span className="text-orange-500">AI Scam Shield</span>?
+          <h2 className="mb-3 text-xl font-semibold text-slate-900 sm:text-2xl">
+            What the scanner checks
           </h2>
-          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto px-4">
-            Experience the future of phishing detection with our cutting-edge multimodal AI technology
+          <p className="mx-auto max-w-2xl px-4 text-base leading-relaxed text-slate-600">
+            Review practical signals across the message formats people use every day.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.3 }}
+              transition={{ delay: index * 0.04, duration: 0.22 }}
               viewport={{ once: true }}
-              className="group"
+              className="h-full rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-orange-200"
             >
-              <div className="h-full p-4 sm:p-6 rounded-2xl border border-slate-200 bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg hover:border-orange-200 transition-all duration-300">
-                <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-100 text-orange-600 mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
                   {feature.icon}
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">{feature.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{feature.description}</p>
-              </div>
+                <h3 className="mb-2 text-base font-semibold text-slate-900">{feature.title}</h3>
+                <p className="text-sm leading-relaxed text-slate-600">{feature.description}</p>
             </motion.div>
           ))}
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.3 }}
+          transition={{ delay: 0.24, duration: 0.22 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="mt-8 text-center"
         >
-          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-orange-100 text-orange-700 font-medium">
-            <Sparkles className="h-4 w-4" />
-            <span>Powered by Advanced AI Technology</span>
-            <ArrowRight className="h-4 w-4" />
+          <div className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-2 text-sm font-medium text-orange-800">
+            <ShieldCheck className="h-4 w-4" />
+            <span>Verdict · Confidence · Evidence</span>
           </div>
         </motion.div>
       </div>
@@ -148,26 +124,20 @@ export default function FaqSection() {
     <>
       <FeaturesSection />
       
-      <section className="relative mt-20 mb-12">
-        {/* Background Graphics */}
-        <div className="absolute inset-0 opacity-3">
-          <div className="absolute top-0 left-1/4 w-32 h-32 bg-orange-400 rounded-full blur-2xl" />
-          <div className="absolute bottom-0 right-1/4 w-40 h-40 bg-orange-300 rounded-full blur-2xl" />
-        </div>
-
-        <div className="relative max-w-3xl mx-auto px-4">
+      <section className="mt-16 mb-12">
+        <div className="mx-auto max-w-3xl px-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.22 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="mb-8 text-center"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
-              Frequently Asked <span className="text-orange-500">Questions</span>
+            <h2 className="mb-3 text-xl font-semibold text-slate-900 sm:text-2xl">
+              Frequently asked <span className="text-orange-500">questions</span>
             </h2>
-            <p className="text-base sm:text-lg text-slate-600 px-4">
-              Everything you need to know about AI Scam Shield's fraud and cyber threat detection capabilities
+            <p className="px-4 text-base leading-relaxed text-slate-600">
+              How to use scan results and review suspicious content safely.
             </p>
           </motion.div>
 
@@ -177,9 +147,9 @@ export default function FaqSection() {
               return (
                 <motion.div
                   key={item.q}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.3 }}
+                  transition={{ delay: index * 0.04, duration: 0.22 }}
                   viewport={{ once: true }}
                 >
                   <button
@@ -187,13 +157,13 @@ export default function FaqSection() {
                     onClick={() => setOpenIndex(isOpen ? null : index)}
                     className="w-full text-left group"
                   >
-                    <div className="p-4 sm:p-6 rounded-2xl border border-slate-200 bg-white hover:border-orange-200 hover:shadow-md transition-all duration-300">
+                    <div className="rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-orange-200 sm:p-5">
                       <div className="flex items-center justify-between gap-2 sm:gap-4">
-                        <p className="font-semibold text-slate-900 text-sm sm:text-base pr-2">{item.q}</p>
+                        <p className="pr-2 text-sm font-semibold text-slate-900 sm:text-base">{item.q}</p>
                         <motion.div
                           animate={{ rotate: isOpen ? 180 : 0 }}
                           transition={{ duration: 0.2 }}
-                          className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center group-hover:bg-orange-200 transition-colors"
+                          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600 transition-colors group-hover:bg-orange-200"
                         >
                           <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
                         </motion.div>
@@ -208,7 +178,7 @@ export default function FaqSection() {
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <p className="pt-3 sm:pt-4 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 mt-3 sm:mt-4">
+                        <p className="mt-3 border-t border-slate-100 pt-3 text-sm leading-relaxed text-slate-600 sm:mt-4 sm:pt-4">
                           {item.a}
                         </p>
                       </motion.div>
@@ -220,16 +190,16 @@ export default function FaqSection() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.3 }}
+            transition={{ delay: 0.24, duration: 0.22 }}
             viewport={{ once: true }}
-            className="text-center mt-12"
+            className="mt-8 text-center"
           >
-            <p className="text-sm sm:text-base text-slate-600 mb-4">Still have questions?</p>
+            <p className="mb-4 text-sm text-slate-600">Need scan or API details?</p>
             <a
               href="/docs"
-              className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-orange-600"
             >
               Visit Documentation
               <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />

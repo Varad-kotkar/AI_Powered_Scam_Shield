@@ -16,6 +16,7 @@ from app.predictors import (
 from app.intent import detect_intent, extract_single_url
 from app.llm_helpers import make_llm_explanation, friendly_chat_reply
 from app.red_flags import detect_red_flags
+from app.batch_scan import batch_router
 
 app = FastAPI(
     title="AI-Powered Scam Shield: An Intelligent Cyber Fraud Detection System",
@@ -236,3 +237,5 @@ async def chat_multipart(
 # Register routes with and without /api prefix for seamless proxy compatibility
 app.include_router(router)
 app.include_router(router, prefix="/api")
+app.include_router(batch_router)
+app.include_router(batch_router, prefix="/api")

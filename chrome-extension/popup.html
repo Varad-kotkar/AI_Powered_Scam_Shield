@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scam Shield</title>
+    <link rel="stylesheet" href="popup.css">
+    <script src="popup.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Scam Shield</h1>
+        <p>Check a message, link, or active page.</p>
+      </header>
+
+      <section class="config" aria-labelledby="config-heading">
+        <h2 id="config-heading">Backend API</h2>
+        <label for="api-url">API base URL</label>
+        <input id="api-url" type="url" autocomplete="url" spellcheck="false"
+          placeholder="http://localhost:8000/api">
+        <button id="save-api-url" class="button secondary" type="button">Save API URL</button>
+      </section>
+
+      <button id="analyze-tab" class="button primary" type="button">
+        Analyze Active Tab URL
+      </button>
+      <p class="hint">Right-click selected text or a link and choose “Scan with Scam Shield” to check it.</p>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+
+      <section id="result" class="result" aria-labelledby="result-heading" hidden>
+        <h2 id="result-heading">Latest result</h2>
+        <p id="source" class="source"></p>
+        <p id="verdict" class="verdict"></p>
+        <p id="confidence" class="confidence"></p>
+        <div>
+          <h3>Red flags</h3>
+          <ul id="red-flags"></ul>
+        </div>
+        <div>
+          <h3>Explanation</h3>
+          <p id="explanation" class="explanation"></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
