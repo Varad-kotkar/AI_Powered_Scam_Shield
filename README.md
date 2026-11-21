@@ -43,14 +43,23 @@ The proposed system aims to develop an AI-powered platform that can assist users
 
 A comprehensive multimodal cyber fraud & scam detection system that combines:
 
-- **Text-based scam detection** using fine-tuned BERT transformer model
-- **URL threat classification** with fine-tuned DistilBERT multiclass transformer classification
+- **Text-based scam detection** using NVIDIA Nemotron with local BERT fallback
+- **URL threat classification** using NVIDIA Nemotron with local DistilBERT fallback
 - **Image-based fraud detection** leveraging ResNet50 deep CNN with optional OCR
 - **Multimodal Fusion logic** to combine multiple fraud signals into a unified threat score
 - **FastAPI backend** with **React frontend**
 - **Chat mode** powered by an intelligent LLM for explainable fraud alerts
 
 Complete pipeline from training to evaluation to real-time inference with production-ready UI.
+
+### Detection Response and Red Flags
+
+Scan responses preserve the existing `label`, `probs`, `explanation`, and modality fields, and add:
+
+- `confidence`: probability for the returned verdict (0–1)
+- `red_flags`: an array of `{ code, label, severity, evidence }` objects
+
+Structured checks cover urgency, payment and credential requests, URL shorteners, Unicode/lookalike domains, visible-link versus `href` mismatches, and external HTML form `POST` targets. The full response, including these fields, is available in the UI's Raw Response panel.
 
 ---
 
@@ -166,15 +175,19 @@ All datasets used within their respective license constraints.
 copy .env.example .env
 ```
 
-2. Configure the following variables:
+2. Set `NVIDIA_API_KEY` to your NVIDIA API key from [build.nvidia.com](https://build.nvidia.com/nvidia/nemotron-3-ultra-550b-a55b), then configure:
 ```env
 MM_TEXT_MODEL_DIR=path/to/text/model
 MM_URL_MODEL_DIR=path/to/url/model
 MM_IMAGE_MODEL_PATH=path/to/image/model
 MM_USE_OCR=true
 MM_TESSERACT_CMD=path/to/tesseract
-# Add LLM provider keys if using chat features
+MM_LLM_PROVIDER=nvidia
+NVIDIA_API_KEY=your-nvidia-api-key
+MM_NVIDIA_MODEL=nvidia/nemotron-3-ultra-550b-a55b
 ```
+
+If NVIDIA is unavailable or returns an unusable response, text and URL checks use the existing local transformer models (or their existing heuristic fallback). Screenshot classification uses OCR text with Nemotron when available, then the local image model; if neither can analyze the image, it reports a cautious 55% phishing / 45% benign estimate. Explanations and chat use the existing local fallback responses.
 
 ### Backend Setup
 

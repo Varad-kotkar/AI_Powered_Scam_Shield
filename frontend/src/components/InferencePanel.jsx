@@ -559,6 +559,11 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
                 <span className={cn("px-3 py-1 rounded-full text-xs font-medium border-0", getVerdictConfig(data.label).badge)}>
                   {getVerdictConfig(data.label).label}
                 </span>
+                {typeof data.confidence === "number" && (
+                  <span className="ml-auto text-sm font-semibold tabular-nums text-muted-foreground">
+                    {(data.confidence * 100).toFixed(1)}% confidence
+                  </span>
+                )}
               </motion.div>
             )}
 
@@ -580,6 +585,30 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
                   ))}
                 </div>
               </div>
+            )}
+
+            {Array.isArray(data.red_flags) && (
+              <section className="rounded-xl border bg-muted/20 p-4">
+                <h3 className="text-sm font-semibold mb-3">Red Flags</h3>
+                {data.red_flags.length ? (
+                  <ul className="space-y-3">
+                    {data.red_flags.map((flag, index) => (
+                      <li key={`${flag.code}-${index}`} className="rounded-lg border bg-background p-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-sm font-medium">{flag.label}</span>
+                          <span className="rounded-full border px-2 py-0.5 text-xs uppercase">
+                            {flag.severity}
+                          </span>
+                          <code className="text-xs text-muted-foreground">{flag.code}</code>
+                        </div>
+                        <p className="mt-1 text-sm text-muted-foreground break-words">{flag.evidence}</p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No structured red flags identified.</p>
+                )}
+              </section>
             )}
 
             {/* AI Explanation */}

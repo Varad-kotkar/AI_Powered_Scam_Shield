@@ -6,6 +6,7 @@ from PIL import Image
 import torch
 import requests
 from app.models_loader import get_registry, img_transform, DEVICE
+from app.llm_helpers import classify_with_nvidia
 
 USE_OCR = os.getenv("MM_USE_OCR", "1") == "1"
 N8N_OCR_ENDPOINT = os.getenv("MM_N8N_OCR_ENDPOINT", "http://localhost:5678/webhook/ocr")
@@ -114,6 +115,11 @@ def predict_text_probs(text: Optional[str]) -> Dict[str, float]:
     intel = get_dataset_intel().check_text(text)
     intel_boost = 0.25 if (intel and intel.get("matched")) else 0.0
 
+    nvidia_probs = classify_with_nvidia(text, "text")
+    if nvidia_probs:
+        p_phish = min(0.99, nvidia_probs["phishing"] + intel_boost)
+        return {"benign": round(1.0 - p_phish, 4), "phishing": round(p_phish, 4)}
+
     reg = get_registry()
     if reg.text_tokenizer and reg.text_model:
         try:
@@ -146,11 +152,10 @@ def predict_url_probs(url: Optional[str]) -> Dict[str, float]:
             if ttype == "malware":
                 return {"benign": 0.01, "phishing": 0.15, "malware": 0.84}
             return {"benign": 0.02, "phishing": 0.95, "malware": 0.03}
-        elif intel.get("threat_type") == "benign":
-            # Verified top benign domain
-            h_score = heuristic_url_score(url)
-            if h_score.get("phishing", 0.0) < 0.40:
-                return {"benign": 0.96, "phishing": 0.03, "malware": 0.01}
+
+    nvidia_probs = classify_with_nvidia(url, "url")
+    if nvidia_probs:
+        return {label: round(probability, 4) for label, probability in nvidia_probs.items()}
 
     reg = get_registry()
     if reg.url_tokenizer and reg.url_model:
@@ -166,11 +171,21 @@ def predict_url_probs(url: Optional[str]) -> Dict[str, float]:
                 return {"benign": round(float(probs[0]), 4), "phishing": round(float(probs[1]), 4), "malware": 0.0}
         except Exception as e:
             print(f"[predictors] URL model inference error: {e}")
+
+    if intel and intel.get("threat_type") == "benign":
+        h_score = heuristic_url_score(url)
+        if h_score.get("phishing", 0.0) < 0.40:
+            return {"benign": 0.96, "phishing": 0.03, "malware": 0.01}
     
     # Fallback heuristic
     return heuristic_url_score(url)
 
-def predict_image_probs(image_bytes: bytes) -> Dict[str, float]:
+def predict_image_probs(image_bytes: bytes, ocr_text: Optional[str] = None) -> Dict[str, float]:
+    if ocr_text and ocr_text.strip():
+        nvidia_probs = classify_with_nvidia(ocr_text, "text")
+        if nvidia_probs:
+            return {label: round(probability, 4) for label, probability in nvidia_probs.items()}
+
     reg = get_registry()
     if reg.image_model:
         try:
@@ -184,11 +199,11 @@ def predict_image_probs(image_bytes: bytes) -> Dict[str, float]:
         except Exception as e:
             print(f"[predictors] Image model inference error: {e}")
     # Fallback: check OCR text if available
-    ocr_txt = get_ocr_text_from_bytes(image_bytes)
+    ocr_txt = ocr_text or get_ocr_text_from_bytes(image_bytes)
     if ocr_txt:
         p_phish = heuristic_text_score(ocr_txt)
         return {"benign": round(1.0 - p_phish, 4), "phishing": round(p_phish, 4)}
-    return {"benign": 0.85, "phishing": 0.15}
+    return {"benign": 0.45, "phishing": 0.55}
 
 # ---------------- Multimodal Fusion ----------------
 def url_multiclass_to_binary(url_probs: Dict[str, float]) -> float:

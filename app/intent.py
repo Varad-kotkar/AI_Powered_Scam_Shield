@@ -25,13 +25,32 @@ def detect_intent(user_query: str, has_file: bool = False) -> str:
 
     extracted_url = extract_single_url(user_query)
     has_image_ref = any(w in q for w in ["screenshot", "image", "photo", "pic", "picture"])
+    explicit_scan_request = any(phrase in q for phrase in [
+        "is this a scam", "is this phishing", "is this fraud", "is this fraudulent",
+        "is this legit", "is this legitimate", "is this safe", "is it a scam",
+        "is it phishing", "is it safe", "does this look suspicious",
+        "can you check this message", "analyze this message", "analyse this message",
+        "scan this message"
+    ])
 
-    # If file is attached with text or URL -> combined mode
-    if has_file and (extracted_url or len(q) > 15):
+    # A URL or a substantial text payload can be analyzed alongside an image.
+    if has_file and extracted_url:
         return "combined"
 
-    if has_file or (has_image_ref and not extracted_url and len(q) < 40):
+    if has_file and has_image_ref:
         return "image_check"
+
+    if has_file and len(q) > 40:
+        return "combined"
+
+    if has_file:
+        return "image_check"
+
+    if has_image_ref and not extracted_url and len(q) < 40:
+        return "image_check"
+
+    if explicit_scan_request:
+        return "text_message"
 
     # URL check has priority if there's a URL and user is asking about it
     if extracted_url:
