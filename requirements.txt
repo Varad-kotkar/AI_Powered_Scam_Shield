@@ -16,3 +16,4 @@ evaluate
 requests
 python-multipart
 python-dotenv
+streamlit

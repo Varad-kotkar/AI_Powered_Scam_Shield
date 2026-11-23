@@ -1,3 +1,5 @@
+"""Load optional local model assets and provide one shared registry."""
+
 import os
 from pathlib import Path
 from typing import Optional, Tuple, Any
@@ -10,13 +12,15 @@ from transformers import (
 )
 import dotenv
 
-# Load .env
+# Load local settings before resolving model paths or optional provider configuration.
 REPO_ROOT = Path(__file__).resolve().parent.parent
 dotenv.load_dotenv(REPO_ROOT / ".env")
 
+# Prefer a GPU when available; the CPU path keeps the project usable without one.
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def resolve_path(env_var: str, default: str) -> Path:
+    """Resolve a model path from the environment or the repository-relative default."""
     raw = os.getenv(env_var, default)
     p = Path(raw)
     if not p.is_absolute():
@@ -36,6 +40,8 @@ img_transform = transforms.Compose([
 ])
 
 class ModelRegistry:
+    """Hold loaded models so each API request does not reload model files."""
+
     def __init__(self):
         self.text_tokenizer = None
         self.text_model = None
@@ -45,14 +51,17 @@ class ModelRegistry:
         self.initialized = False
 
     def load_all(self):
+        """Load each available model once; predictors handle missing models."""
         if self.initialized:
             return
+        # Missing or broken model files are allowed; predictor functions provide fallbacks.
         self.load_text()
         self.load_url()
         self.load_image()
         self.initialized = True
 
     def load_text(self):
+        """Load the local text tokenizer and classifier when their directory exists."""
         path_str = str(TEXT_MODEL_DIR)
         if os.path.isdir(path_str):
             try:
@@ -65,9 +74,11 @@ class ModelRegistry:
                 return
             except Exception as e:
                 print(f"[models_loader] Failed to load custom text model: {e}")
+        # Keep startup usable when model weights are not installed.
         print(f"[models_loader] Custom text model not found at {path_str}. Using heuristic analyzer fallback.")
 
     def load_url(self):
+        """Load the local URL tokenizer and classifier when their directory exists."""
         path_str = str(URL_MODEL_DIR)
         if os.path.isdir(path_str):
             try:
@@ -80,9 +91,11 @@ class ModelRegistry:
                 return
             except Exception as e:
                 print(f"[models_loader] Failed to load custom URL model: {e}")
+        # URL rules and available provider classification remain usable without these files.
         print(f"[models_loader] Custom URL model not found at {path_str}. Using heuristic analyzer fallback.")
 
     def load_image(self):
+        """Load local image weights into the matching ResNet architecture."""
         path_str = str(IMAGE_MODEL_PATH)
         if os.path.isfile(path_str):
             try:
@@ -105,11 +118,14 @@ class ModelRegistry:
                 return
             except Exception as e:
                 print(f"[models_loader] Failed to load custom image model: {e}")
+        # The image predictor can still use OCR text or its cautious default estimate.
         print(f"[models_loader] Custom image model not found at {path_str}. Using heuristic analyzer fallback.")
 
 registry = ModelRegistry()
 
 def get_registry() -> ModelRegistry:
+    """Return the shared registry, initializing it on the first request."""
+    # Lazy loading avoids loading all large model files just to import the web app.
     if not registry.initialized:
         registry.load_all()
     return registry

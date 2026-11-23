@@ -11,7 +11,14 @@ import BatchScanPage from "./pages/BatchScanPage";
 import DocsPage from "./pages/DocsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
-// Home Page Component
+// Text, SMS, email, and script use the same text endpoint; URLs and images have dedicated endpoints.
+function submitDetection(mode, query, file) {
+  if (mode === "urls") return urlCheck(query);
+  if (mode === "images") return imageCheckFile(file);
+  if (mode === "chat") return chatMultipart(query, file);
+  return textCheck(query);
+}
+
 function HomePage() {
   const [mode, setMode] = useState("text");
   const [query, setQuery] = useState("");
@@ -24,23 +31,12 @@ function HomePage() {
     setResult(null);
 
     try {
-      let response;
-      if (mode === "urls") {
-        response = await urlCheck(query);
-      } else if (mode === "images") {
-        if (!file) {
-          alert("Upload image first!");
-          return;
-        }
-        response = await imageCheckFile(file);
-      } else if (mode === "chat") {
-        response = await chatMultipart(query, file);
-      } else if (mode === "script") {
-        response = await textCheck(query);
-      } else {
-        response = await textCheck(query);
+      if (mode === "images" && !file) {
+        alert("Upload image first!");
+        return;
       }
-      
+
+      const response = await submitDetection(mode, query, file);
       console.log("API Response:", response);
       console.log("Response Data:", response.data);
       setResult(response.data);
@@ -53,6 +49,7 @@ function HomePage() {
     }
   }
 
+  // Clear the visible result and the parent input state; the search bar mirrors this reset.
   const clearResults = () => {
     setResult(null);
     setQuery("");

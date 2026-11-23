@@ -110,6 +110,7 @@ export default function BatchScanPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Load the persistent review lists once when the page opens.
     let active = true;
     getLocalAllowlist()
       .then((response) => active && setAllowlist(response.data))
@@ -123,6 +124,7 @@ export default function BatchScanPage() {
   }, []);
 
   useEffect(() => {
+    // Poll only active jobs, and cancel timers when the job or page changes.
     if (!job?.job_id || ["completed", "failed"].includes(job.status)) return undefined;
     let active = true;
     let timeoutId;
@@ -158,6 +160,7 @@ export default function BatchScanPage() {
   }, [job?.job_id, job?.status]);
 
   async function submitBatch(event) {
+    // Start one server-side job; the polling effect updates its progress afterward.
     event.preventDefault();
     if (!file) return;
     setBusy(true);
@@ -197,6 +200,7 @@ export default function BatchScanPage() {
   }
 
   async function submitFalsePositive(item) {
+    // Feedback records a review item; it does not alter the detection prediction.
     if (!job) return;
     setError("");
     try {
@@ -215,6 +219,7 @@ export default function BatchScanPage() {
   }
 
   const results = job?.results || [];
+  // Export controls are shown only after every input in the file has been scanned.
   const canExport = job?.status === "completed" && results.length > 0;
 
   return (

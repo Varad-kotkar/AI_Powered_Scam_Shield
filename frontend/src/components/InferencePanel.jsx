@@ -18,7 +18,7 @@ import {
   ChevronDown
 } from "lucide-react"
 
-// Keep all the existing functions and constants from the original file
+// The panel accepts text, URL, image, combined-scan, and plain chat response shapes.
 const MODE_LABELS = {
   text: "Text Message",
   url: "URL",
@@ -33,7 +33,7 @@ const MODE_ICONS = {
   fusion: <Sparkles className="h-4 w-4" />
 }
 
-// Helper functions - define before components that use them
+// Select probability rows according to the response's input mode.
 const getClasses = (mode) => {
   if (mode === "url") return ["benign", "phishing", "malware"]
   return ["benign", "phishing"]
@@ -95,7 +95,7 @@ const getLoadingText = (mode, data) => {
 
 // Get classes based on mode or intent
 const getClassesForData = (mode, data) => {
-  // Check if it's URL mode (either from mode prop or from intent/data)
+  // URL responses can be identified by either the selected tab or backend intent.
   if (mode === "url" || mode === "urls" || data?.mode === "url" || data?.intent === "url_check") {
     return ["benign", "phishing", "malware"]
   }
@@ -127,6 +127,7 @@ const ConfidenceBar = ({
   value,
   index,
 }) => {
+  // The API sends probabilities from 0 to 1; the panel displays them as percentages.
   const percentage = (value * 100).toFixed(1)
   const displayName = getDisplayName(className)
   const barColor = getConfidenceColor(className)
@@ -186,7 +187,7 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
   const [toast, setToast] = useState(null)
   const isChatMode = mode === "chat"
 
-  // Custom toast function
+  // Keep small clipboard confirmations local to this result panel.
   const showToast = (message, type = 'success') => {
     setToast({ message, type })
     setTimeout(() => setToast(null), 3000)
@@ -205,6 +206,7 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
 
   const handleCopyWarning = async () => {
     try {
+      // Share a short safety alert instead of copying the full diagnostic response.
       await navigator.clipboard.writeText(formatShareWarning(data))
       setWarningCopied(true)
       setTimeout(() => setWarningCopied(false), 2000)
@@ -374,7 +376,7 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
     )
   }
 
-  // Empty state
+  // Explain what will appear before the first scan has completed.
   if (!data) {
     return (
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
@@ -572,6 +574,7 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
                   {getVerdictConfig(data.label).label}
                 </span>
                 {typeof data.confidence === "number" && (
+                  // Overall confidence is the score for the selected verdict.
                   <span className="ml-auto text-sm font-semibold tabular-nums text-muted-foreground">
                     {(data.confidence * 100).toFixed(1)}% confidence
                   </span>
@@ -580,6 +583,7 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
             )}
 
             {/* Confidence Scores */}
+            {/* Probability rows show the raw class scores returned by the backend. */}
             {data.probs && (
               <div className="rounded-xl border bg-muted/20 p-4">
                 <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
@@ -599,6 +603,8 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
               </div>
             )}
 
+            {/* Keep structured evidence separate so each flag is easy to review. */}
+            {/* red_flags explain which explicit checks matched; they are not class probabilities. */}
             {Array.isArray(data.red_flags) && (
               <section className="rounded-xl border bg-muted/20 p-4">
                 <h3 className="text-sm font-semibold mb-3">Red Flags</h3>
@@ -624,6 +630,7 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
             )}
 
             {/* AI Explanation */}
+            {/* The explanation can come from the configured LLM or the local text fallback. */}
             {data.explanation && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
@@ -680,7 +687,7 @@ export default function InferencePanel({ data, loading, mode, onClear }) {
               </motion.div>
             )}
 
-            {/* Raw JSON Collapsible */}
+            {/* Raw JSON exposes the full endpoint response schema without changing its fields. */}
             <div className="flex flex-col flex-wrap gap-2 sm:flex-row">
               <button
                 onClick={() => setIsJsonOpen(!isJsonOpen)}

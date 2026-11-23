@@ -1,8 +1,11 @@
+"""Choose which detection path best matches a chat request."""
+
 import os
 import re
 from typing import Optional
 
 def extract_single_url(text: str) -> Optional[str]:
+    """Extract the first URL or bare domain and add HTTPS when it has no scheme."""
     if not text:
         return None
     cleaned = re.sub(r'[<>\(\)\[\]\{\},;:]+', ' ', text)
@@ -18,6 +21,7 @@ def extract_single_url(text: str) -> Optional[str]:
     return None
 
 def detect_intent(user_query: str, has_file: bool = False) -> str:
+    """Route chat input using file, URL, explicit-scan, and conversation cues."""
     q = (user_query or "").strip().lower()
 
     if not q and has_file:
@@ -33,7 +37,7 @@ def detect_intent(user_query: str, has_file: bool = False) -> str:
         "scan this message"
     ])
 
-    # A URL or a substantial text payload can be analyzed alongside an image.
+    # Files paired with a URL or substantial text are analyzed as combined input.
     if has_file and extracted_url:
         return "combined"
 
@@ -52,7 +56,7 @@ def detect_intent(user_query: str, has_file: bool = False) -> str:
     if explicit_scan_request:
         return "text_message"
 
-    # URL check has priority if there's a URL and user is asking about it
+    # Treat a short URL-oriented question as a URL scan before conversational chat.
     if extracted_url:
         if any(w in q for w in ["safe", "visit", "link", "url", "check", "legit", "is this", "open"]):
             return "url_check"

@@ -1,3 +1,5 @@
+"""Build small in-memory lookup sets from optional local threat datasets."""
+
 import os
 import re
 from pathlib import Path
@@ -8,6 +10,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO_ROOT / "data"
 
 class DatasetIntelligence:
+    """Cache known URL and text indicators to avoid rereading data per request."""
+
     def __init__(self):
         self._initialized = False
         self.malicious_urls: Set[str] = set()
@@ -17,6 +21,7 @@ class DatasetIntelligence:
         self.phishing_email_signatures: Set[str] = set()
 
     def _normalize_url(self, url: str) -> str:
+        """Create a stable key for exact URL lookups."""
         if not url:
             return ""
         u = url.strip().lower()
@@ -25,6 +30,7 @@ class DatasetIntelligence:
         return u
 
     def _extract_domain(self, url: str) -> str:
+        """Extract a host name so known malicious domains also match their URLs."""
         if not url:
             return ""
         u = url.strip().lower()
@@ -38,9 +44,11 @@ class DatasetIntelligence:
             return ""
 
     def load_datasets(self):
+        """Load bounded samples once; missing or unreadable files remain optional."""
         if self._initialized:
             return
 
+        # These local indexes add known examples, but are optional and are not the only detector.
         print("[DatasetIntel] Indexing uploaded datasets for real-time threat intelligence...")
         
         # 1. Load verified phishing/malware URLs from unique list
@@ -82,7 +90,8 @@ class DatasetIntelligence:
                                 self.malicious_domains.add(dom)
                             self.malicious_types[norm_u] = str(row["type"])
                             loaded_count += 1
-                    if loaded_count >= 100000:  # Fast in-memory index limit for instant latency
+                    # Bound memory and startup time instead of loading the whole CSV.
+                    if loaded_count >= 100000:
                         break
                 print(f"[DatasetIntel] Indexed {loaded_count} real-world threats from malicious_phish.csv.")
             except Exception as e:
@@ -121,9 +130,11 @@ class DatasetIntelligence:
             except Exception as e:
                 print(f"[DatasetIntel] Error indexing Phishing_Email.csv: {e}")
 
+        # Do not retry file reads for every request, even when optional files are absent.
         self._initialized = True
 
     def check_url(self, url: str) -> Optional[Dict[str, Any]]:
+        """Return a known threat/safe-domain match, or None when no entry matches."""
         if not self._initialized:
             self.load_datasets()
 
@@ -136,6 +147,7 @@ class DatasetIntelligence:
             return {
                 "matched": True,
                 "threat_type": threat_type,
+                # This is the lookup confidence for an exact dataset match, not a model score.
                 "confidence": 0.99,
                 "source": "Uploaded Threat Dataset (malicious_phish.csv / URLhaus)",
                 "detail": f"Exact URL match found in threat intelligence dataset ({threat_type})."
@@ -159,6 +171,7 @@ class DatasetIntelligence:
                 return {
                     "matched": False,
                     "threat_type": "benign",
+                    # This confidence describes the benign-list match used for suppression.
                     "confidence": 0.92,
                     "source": "Top-1M Verified Safe Domain Dataset",
                     "detail": f"Domain '{dom}' matches verified top benign web property."
@@ -167,6 +180,7 @@ class DatasetIntelligence:
         return None
 
     def check_text(self, text: str) -> Optional[Dict[str, Any]]:
+        """Look for a small set of known phishing phrases in submitted text."""
         if not self._initialized:
             self.load_datasets()
 
@@ -189,6 +203,7 @@ class DatasetIntelligence:
 _intel_instance = None
 
 def get_dataset_intel() -> DatasetIntelligence:
+    """Return one shared intelligence index for all predictors."""
     global _intel_instance
     if _intel_instance is None:
         _intel_instance = DatasetIntelligence()

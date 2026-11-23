@@ -18,6 +18,15 @@ import {
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 
+const MODE_PLACEHOLDERS = {
+  urls: "Enter any suspicious URL to check for phishing...",
+  emails: "Enter any email content to analyze...",
+  sms: "Enter any SMS message to check...",
+  script: "Paste any script or code to analyze...",
+  chat: "Ask anything about phishing, security, or upload content...",
+  text: "Enter any suspicious message or text...",
+};
+
 export default function PremiumSearchBar({
   baseQuery,
   setBaseQuery,
@@ -29,7 +38,7 @@ export default function PremiumSearchBar({
   loading,
   onClearResults,
 }) {
-  // 🔑 ISOLATED STATE PER MODE
+  // Keep each mode's draft and attachment separate when users switch tabs.
   const [modeQueries, setModeQueries] = useState({
     text: "",
     sms: "",
@@ -63,7 +72,7 @@ export default function PremiumSearchBar({
     setBaseFile(value);
   };
 
-  // Sync internal state with props when they change (for clear results)
+  // The parent clears these props after a scan is cleared; mirror that reset locally.
   useEffect(() => {
     if (!baseQuery) {
       setModeQueries((prev) => ({ ...prev, [mode]: "" }));
@@ -79,20 +88,7 @@ export default function PremiumSearchBar({
   const isImageMode = mode === "images";
   const isChatMode = mode === "chat";
 
-  const placeholder =
-    mode === "urls"
-      ? "Enter any suspicious URL to check for phishing..."
-      : mode === "emails"
-      ? "Enter any email content to analyze..."
-      : mode === "sms"
-      ? "Enter any SMS message to check..."
-      : mode === "script"
-      ? "Paste any script or code to analyze..."
-      : mode === "chat"
-      ? "Ask anything about phishing, security, or upload content..."
-      : mode === "text"
-      ? "Enter any suspicious message or text..."
-      : "Enter content to analyze...";
+  const placeholder = MODE_PLACEHOLDERS[mode] || "Enter content to analyze...";
 
   const getModeIcon = () => {
     switch (mode) {

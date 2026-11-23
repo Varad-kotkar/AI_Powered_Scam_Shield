@@ -99,6 +99,22 @@ export default function DocsPage() {
                   <p className="text-slate-600">Advanced LLM integration for intelligent analysis</p>
                 </motion.div>
               </div>
+
+              <section
+                id="telegram"
+                className="scroll-mt-24 mt-12 rounded-xl border border-slate-200 bg-slate-50 p-6 text-left"
+              >
+                <h2 className="text-xl font-semibold text-slate-900">Use Scam Shield in Telegram</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  Run the Telegram bot, then add its public Telegram link to the frontend to show a direct shortcut in the top navigation.
+                </p>
+                <pre className="mt-4 overflow-x-auto rounded-lg bg-white p-3 text-sm text-slate-800">
+                  <code>VITE_TELEGRAM_BOT_URL=https://t.me/YourBotUsername</code>
+                </pre>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Put this setting in <code>frontend/.env.local</code>, replace the example with your bot username, and restart the frontend. Never put the bot token in a VITE setting; keep it in the bot process environment as <code>TELEGRAM_BOT_TOKEN</code>.
+                </p>
+              </section>
             </motion.div>
           </div>
         </main>

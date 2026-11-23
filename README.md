@@ -69,6 +69,17 @@ The page also manages a local SQLite allowlist and false-positive review feedbac
 
 The API uses `POST /api/batch_scan` and `GET /api/batch_scan/{job_id}` for scans, `POST /api/batch_scan/{job_id}/results/{item_id}/false_positive` for feedback, `GET/POST /api/allowlist` and `DELETE /api/allowlist/{entry_id}` for the allowlist, and `GET /api/feedback/false-positives` for review history.
 
+### Cleaning a Local Dataset
+
+The standalone script removes empty and duplicate rows, normalizes Unicode and whitespace, standardizes URL and label fields, and writes a cleaned copy next to the input file:
+
+```powershell
+python scripts/clean_dataset.py raw.json
+python scripts/clean_dataset.py raw.csv --output cleaned.csv
+```
+
+The output defaults to `<input-name>_cleaned` with the same file extension. The script only reads local files; it does not call external services.
+
 ---
 
 ## Model Performance
@@ -222,6 +233,17 @@ npm run dev
 The application will be available at:
 - **Backend API:** http://127.0.0.1:8000
 - **Frontend:** http://localhost:5173
+
+### Streamlit App (Local or Hosted)
+
+The standalone Streamlit page calls the existing text, URL, and image detection functions directly. Run it from the repository root:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m streamlit run streamlit_app.py
+```
+
+To publish it with [Streamlit Community Cloud](https://share.streamlit.io/), push the repository to GitHub, create a new app from that repository and branch, and set `streamlit_app.py` as the main file. Add `NVIDIA_API_KEY` and any other required provider/model settings in the app's **Secrets** settings; never put API keys in the source code. Dataset and model files are not included in this repository, so the hosted app uses configured provider access or the existing local fallbacks unless those assets are made available in the deployment.
 
 ---
 
